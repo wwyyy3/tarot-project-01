@@ -1,0 +1,50 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>塔罗牌 · 灵性指引</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="tarot-container">
+        <div class="stars"></div>
+        <div class="nebula"></div>
+        <header class="header">
+            <h1 class="title">✦ 塔 罗 牌 ✦</h1>
+            <p class="subtitle">倾听内在的智慧</p>
+        </header>
+        <div class="card-area">
+            <div class="card-rail" id="cardRail"></div>
+        </div>
+        <div class="controls">
+            <div class="control-group">
+                <label class="control-label">抽牌数量</label>
+                <div class="counter">
+                    <button class="counter-btn" id="decrement">−</button>
+                    <span class="counter-value" id="cardCount">1</span>
+                    <button class="counter-btn" id="increment">+</button>
+                </div>
+            </div>
+            <button class="draw-btn" id="drawBtn"><span class="draw-btn-icon">🔮</span><span>抽牌</span></button>
+            <button class="shuffle-btn" id="shuffleBtn">洗牌</button>
+        </div>
+        <div class="result-panel" id="resultPanel">
+            <div class="result-cards" id="resultCards"></div>
+            <div class="result-detail" id="resultDetail"></div>
+        </div>
+        <div class="shuffle-overlay" id="shuffleOverlay">
+            <div class="shuffle-cards">
+                <div class="shuffle-card" style="--i:0">🃏</div>
+                <div class="shuffle-card" style="--i:1">🃏</div>
+                <div class="shuffle-card" style="--i:2">🃏</div>
+                <div class="shuffle-card" style="--i:3">🃏</div>
+                <div class="shuffle-card" style="--i:4">🃏</div>
+                <div class="shuffle-card" style="--i:5">🃏</div>
+            </div>
+            <p class="shuffle-text">洗牌中...</p>
+        </div>
+    </div>
+    <script src="/js/app.js"></script>
+</body>
+</html>

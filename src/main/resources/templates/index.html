@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>塔罗牌 · 灵性占卜</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="tarot-container">
+        <div class="stars"></div>
+        <div class="nebula"></div>
+
+        <!-- ===== 阶段 1: 宝石展示 ===== -->
+        <div class="gem-stage" id="gemStage">
+            <div class="gems-wrapper">
+                <div class="gem gem-amethyst">
+                    <div class="gem-shape"></div>
+                    <div class="gem-glow"></div>
+                    <div class="gem-label">紫水晶</div>
+                </div>
+                <div class="gem gem-ruby">
+                    <div class="gem-shape"></div>
+                    <div class="gem-glow"></div>
+                    <div class="gem-label">红宝石</div>
+                </div>
+                <div class="gem gem-sapphire">
+                    <div class="gem-shape"></div>
+                    <div class="gem-glow"></div>
+                    <div class="gem-label">蓝宝石</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== 阶段 2: 思考提示 ===== -->
+        <div class="prompt-stage hidden" id="promptStage">
+            <div class="prompt-content">
+                <div class="prompt-ornament">✦ ✦ ✦</div>
+                <p class="prompt-text">思考提问并默念</p>
+                <p class="prompt-sub">在心中凝聚你的问题，等待指引</p>
+                <button class="shuffle-start-btn" id="shuffleStartBtn">
+                    <span class="btn-icon">🃏</span>
+                    <span>开始洗牌</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- ===== 阶段 3: 扇形展牌 + 选牌 ===== -->
+        <div class="fan-stage hidden" id="fanStage">
+            <div class="fan-header">
+                <span class="fan-title">从扇中选择你心仪的卡牌</span>
+                <span class="fan-counter" id="fanCounter">已选 0 张</span>
+            </div>
+            <div class="fan-scene" id="fanScene">
+                <div class="selected-row" id="selectedRow">
+                    <div class="selected-row-label">已选卡牌</div>
+                    <div class="selected-row-cards" id="selectedRowCards"></div>
+                </div>
+                <div class="fan-container" id="fanContainer"></div>
+                <div class="fan-pivot"></div>
+            </div>
+            <div class="fan-actions">
+                <button class="fan-btn reshuffle-btn" id="reshuffleBtn" type="button">重新洗牌</button>
+                <button class="fan-btn confirm-btn" id="confirmBtn" disabled>确认选择</button>
+            </div>
+        </div>
+
+        <!-- ===== 阶段 4: 输入提问 ===== -->
+        <div class="question-stage hidden" id="questionStage">
+            <div class="question-box">
+                <div class="question-label">请输入你的提问</div>
+                <textarea class="question-input" id="questionInput" rows="3" placeholder="例如：我最近的事业发展会如何？"></textarea>
+                <div class="api-key-group">
+                    <label class="api-key-label">DeepSeek API Key</label>
+                    <div class="api-key-wrapper">
+                    <input class="api-key-input" id="apiKeyInput" type="password" placeholder="sk-..." />
+                    <button class="api-key-eye" id="apiKeyEye" type="button" aria-label="切换密钥可见性">👁</button>
+                </div>
+                    <span class="api-key-hint">输入你的 DeepSeek API 密钥以获取解读</span>
+                </div>
+                <button class="ask-btn" id="askBtn">
+                    <span class="btn-icon">🔮</span>
+                    <span>开始占卜</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- ===== 阶段 5: AI 解读结果 ===== -->
+        <div class="answer-stage hidden" id="answerStage">
+            <div class="answer-section">
+                <div class="answer-header">
+                    <span class="answer-title">✦ 占卜解读 ✦</span>
+                </div>
+                <div class="selected-cards-review" id="selectedCardsReview"></div>
+                <div class="answer-question" id="answerQuestion"></div>
+                <div class="answer-loading hidden" id="answerLoading">
+                    <div class="loading-spinner"></div>
+                    <span>正在链接宇宙能量...</span>
+                </div>
+                <div class="answer-content" id="answerContent"></div>
+                <button class="reset-btn" id="resetBtn">重新占卜</button>
+            </div>
+        </div>
+    </div>
+    <script src="/js/app.js"></script>
+</body>
+</html>

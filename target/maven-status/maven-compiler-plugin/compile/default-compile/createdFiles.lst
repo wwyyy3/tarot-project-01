@@ -1,0 +1,4 @@
+com\tarot\TarotApplication.class
+com\tarot\controller\TarotController.class
+com\tarot\model\TarotCard.class
+com\tarot\service\TarotService.class
