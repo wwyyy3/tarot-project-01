@@ -152,9 +152,9 @@ function renderFan(cards) {
     var isMobile = window.innerWidth <= 768;
     var isSmall = window.innerWidth <= 520;
 
-    if (isSmall) { FAN_WIDTH = 330; FAN_ARCH = 68; FAN_BASE_Y = 28; ROW_Y = -190; ROW_GAP = 55; }
-    else if (isMobile) { FAN_WIDTH = Math.min(window.innerWidth - 54, 620); FAN_ARCH = 105; FAN_BASE_Y = 30; ROW_Y = -230; ROW_GAP = 72; }
-    else { FAN_WIDTH = Math.min(window.innerWidth - 120, 940); FAN_ARCH = 170; FAN_BASE_Y = 35; ROW_Y = -260; ROW_GAP = 90; }
+    if (isSmall) { FAN_ARC = 68; FAN_RADIUS = 220; FAN_BASE_Y = 28; ROW_Y = -190; ROW_GAP = 55; }
+    else if (isMobile) { FAN_ARC = 105; FAN_RADIUS = Math.round(window.innerWidth * 0.45); FAN_BASE_Y = 30; ROW_Y = -230; ROW_GAP = 72; }
+    else { FAN_ARC = 170; FAN_RADIUS = Math.min(Math.round(window.innerWidth * 0.38), 600); FAN_BASE_Y = 35; ROW_Y = -260; ROW_GAP = 90; }
 
     var cardW = isSmall ? 36 : (isMobile ? 48 : 62);
     var cardH = Math.round(cardW * 1.56);
