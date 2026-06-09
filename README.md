@@ -36,22 +36,34 @@
 │   └── templates/
 │       └── index.html                         页面模板
 ├── target/                                    Maven 编译输出
-├── gen_ctl.py                                 控制器代码生成脚本（片段，未完成）
-├── make_controller.py                         控制器代码生成脚本（片段，未完成）
-├── page_check.txt                             旧版页面的 HTML 存档
-├── sym.js                                     测试文件
-├── test_*.txt                                 测试注解 / 占位文件
-├── app.log, app2.log                          运行时日志
+├── .vscode/                                   VS Code 编辑器配置
+├── .github/                                   GitHub Actions 工作流
 └── README.md                                  本文档
 ```
 
-### 辅助文件说明
+---
 
-- **gen_ctl.py / make_controller.py** — 开发过程中尝试用 Python 生成 Controller 模板，仅存片段，未实际使用。
-- **page_check.txt** — 旧版简约抽牌界面的 HTML 存档，已被当前 5 阶段版本取代。
-- **test_*.txt (test_full, test_multi, test_qt, test_simple, test_single, test_triple)** — 快速测试和备忘的临时文件，无实际运行影响。
-- **sym.js** — 仅含 `hello` 的测试文件。
-- **app.log / app2.log** — 应用启动和调试输出，可安全忽略。
+## 打包分发
+
+### 生成独立可执行的 JAR
+
+```bash
+mvn clean package -DskipTests
+```
+
+生成的 `target/tarot-card-draw-1.0.0.jar` 是一个 **Spring Boot fat JAR**，内嵌 Tomcat 服务器，包含全部依赖。对方只需安装 **JDK 17+**，双击或在命令行运行：
+
+```bash
+java -jar tarot-card-draw-1.0.0.jar
+```
+
+然后浏览器打开 `http://localhost:8080` 即可使用。
+
+### 分发方式
+
+1. **直接发送 JAR** — 把 `target/tarot-card-draw-1.0.0.jar` 发给对方
+2. **GitHub Release** — 在仓库创建 Release，上传 JAR 作为附件，其他人下载后 `java -jar` 启动
+3. **一起打包 JDK（可选）** — 如果对方没有 Java，可以用 `jpackage` 把 JRE 一起打进去，生成原生安装包（.exe / .dmg / .deb）
 
 ---
 
