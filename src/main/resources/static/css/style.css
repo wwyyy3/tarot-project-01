@@ -4,15 +4,20 @@ body {
     font-family: "Noto Serif SC", "SimSun", serif;
     background: #0a0a12;
     min-height: 100vh;
+    min-height: 100dvh;
     color: #e0d8c8;
     overflow-x: hidden;
+    overflow-y: hidden;
+    display: flex;
+    flex-direction: column;
 }
 .tarot-container {
     position: relative;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 20px;
-    min-height: 100vh;
+    padding: 10px 20px;
+    height: 100vh;
+    height: 100dvh;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -77,10 +82,11 @@ body {
    ======================================================== */
 .gem-stage {
     position: relative; z-index: 1;
+    flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 80vh;
+    min-height: 0;
     animation: fadeIn 1.2s ease;
 }
 .gems-wrapper {
@@ -270,6 +276,11 @@ body {
 .fan-stage {
     position: relative; z-index: 1;
     width: 100%;
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: visible;
     animation: fadeIn 0.8s ease;
 }
 .fan-header {
@@ -295,24 +306,23 @@ body {
 .fan-scene {
     position: relative;
     width: 100%;
-    min-height: 500px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    overflow: visible;
+    flex: 1;
+    min-height: 0;
+    display: block;
+    /*overflow: visible;*/
     margin: 0 auto;
 }
 /* 上方选中卡牌行 */
 .selected-row {
     width: 100%;
-    min-height: 120px;
+    min-height: 90px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     position: relative;
     z-index: 5;
-    padding: 8px 0 4px;
+    padding: 4px 0 4px;
 }
 .selected-row-label {
     font-size: 0.7rem;
@@ -380,11 +390,12 @@ body {
 
 /* ---- 扇形容器 ---- */
 .fan-container {
-    position: relative;
+    position: absolute;
+    bottom: 0;
+    left: 0;
     width: 100%;
-    height: 410px;
+    height: 0;
     perspective: 800px;
-    flex-shrink: 0;
 }
 .fan-pivot {
     display: none;
@@ -451,7 +462,7 @@ body {
     pointer-events: none;
 }
 .fan-card-back::after {
-    content: '✦ ☽ ✦';
+    content: '✦ 🌕 ✦';
     font-size: 0.65rem;
     letter-spacing: 0.35em;
     color: rgba(180,210,255,0.3);
@@ -489,6 +500,8 @@ body {
     content: '✦';
     font-size: 1.2rem;
     color: #d4af7a;
+    letter-spacing: 0;
+    text-align: center;
     text-shadow: 0 0 15px rgba(212, 175, 122, 0.5);
 }
 
@@ -499,7 +512,7 @@ body {
 }
 
 .fan-actions {
-    padding: 20px 0 0;
+    padding: 0 0 0;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -549,10 +562,10 @@ body {
 
 /* ---- 响应式 ---- */
 @media (max-width: 768px) {
-    .fan-scene { min-height: 400px; }
-    .fan-container { height: 290px; }
-    .selected-row { min-height: 90px; }
-    .selected-row-cards { min-height: 78px; }
+    .fan-scene { min-height: 0; }
+    .fan-container { height: 0; margin-top: 0; position: absolute; bottom: 0; left: 0; width: 100%; }
+    .selected-row { min-height: 70px; }
+    .selected-row-cards { min-height: 60px; }
     .selected-row-cards .row-card { width: 48px; height: 75px; }
     .fan-card { width: 48px; height: 75px; }
     .fan-card-back { border-radius: 4px; border-width: 1px; }
@@ -575,9 +588,9 @@ body {
     .fan-title { font-size: 0.95rem; }
 }
 @media (max-width: 520px) {
-    .fan-scene { min-height: 340px; }
-    .fan-container { height: 240px; }
-    .selected-row { min-height: 70px; }
+    .fan-scene { min-height: 0; }
+    .fan-container { height: 0; margin-top: 0; position: absolute; bottom: 0; left: 0; width: 100%; }
+    .selected-row { min-height: 56px; }
     .selected-row-cards { min-height: 60px; }
     .selected-row-cards .row-card { width: 36px; height: 56px; }
     .fan-card { width: 36px; height: 56px; }
@@ -586,6 +599,7 @@ body {
     .fan-title { font-size: 0.85rem; }
     .fan-btn { padding: 10px 28px; font-size: 0.9rem; }
 }
+/* ========================================================
    阶段 4：输入提问
    ======================================================== */
 .question-stage {
@@ -593,6 +607,11 @@ body {
     width: 100%;
     max-width: 600px;
     margin: 0 auto;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 0;
     animation: fadeIn 0.8s ease;
 }
 .question-box {
@@ -602,6 +621,8 @@ body {
     padding: 40px;
     border: 1px solid rgba(200, 170, 120, 0.12);
     box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+    max-height: 100%;
+    overflow-y: auto;
 }
 .question-label {
     font-size: 1.2rem;
@@ -730,6 +751,26 @@ body {
     opacity: 0.7;
 }
 
+.back-btn {
+    display: block;
+    margin: 12px auto 0;
+    padding: 8px 24px;
+    border-radius: 20px;
+    border: 1px solid rgba(200, 170, 120, 0.25);
+    background: rgba(200, 170, 120, 0.06);
+    color: #887a6a;
+    font-family: inherit;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    letter-spacing: 0.08em;
+}
+.back-btn:hover {
+    background: rgba(200, 170, 120, 0.12);
+    border-color: rgba(200, 170, 120, 0.4);
+    color: #c0b0a0;
+}
+
 /* ========================================================
    阶段 5：AI 解读结果
    ======================================================== */
@@ -738,6 +779,11 @@ body {
     width: 100%;
     max-width: 700px;
     margin: 0 auto;
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
     animation: fadeIn 0.8s ease;
 }
 .answer-section {
@@ -747,10 +793,16 @@ body {
     padding: 36px;
     border: 1px solid rgba(200, 170, 120, 0.12);
     box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 .answer-header {
     text-align: center;
-    margin-bottom: 24px;
+    margin-bottom: 12px;
+    flex-shrink: 0;
 }
 .answer-title {
     font-size: 1.5rem;
@@ -763,7 +815,8 @@ body {
     justify-content: center;
     gap: 8px;
     flex-wrap: wrap;
-    margin-bottom: 20px;
+    margin-bottom: 12px;
+    flex-shrink: 0;
 }
 .review-card {
     width: 48px;
@@ -795,11 +848,12 @@ body {
     background: rgba(0,0,0,0.2);
     border-radius: 10px;
     padding: 14px 18px;
-    margin-bottom: 20px;
+    margin-bottom: 12px;
     font-size: 0.95rem;
     color: #c0b0a0;
     line-height: 1.5;
     border-left: 3px solid #d4af7a;
+    flex-shrink: 0;
 }
 .answer-question::before {
     content: '📝 你的问题：';
@@ -838,6 +892,8 @@ body {
     font-size: 0.95rem;
     line-height: 1.8;
     color: #d0c8b8;
+    flex: 1;
+    overflow-y: auto;
 }
 .answer-content h2,
 .answer-content h3,
@@ -888,7 +944,7 @@ body {
 }
 .reset-btn {
     display: block;
-    margin: 24px auto 0;
+    margin: 12px auto 0;
     padding: 12px 40px;
     border-radius: 30px;
     border: 1px solid rgba(200, 170, 120, 0.25);
@@ -899,6 +955,7 @@ body {
     cursor: pointer;
     transition: all 0.3s;
     letter-spacing: 0.1em;
+    flex-shrink: 0;
 }
 .reset-btn:hover {
     background: rgba(200, 170, 120, 0.15);
@@ -911,7 +968,7 @@ body {
     .gems-wrapper { gap: 40px; }
 }
 @media (max-width: 768px) {
-    .gem-stage { min-height: 70vh; }
+    .gem-stage { min-height: 0; }
     .gem { width: 100px; height: 150px; }
     .gem-shape { width: 60px; height: 80px; }
     .gem-glow { width: 90px; height: 90px; }
@@ -920,7 +977,7 @@ body {
     .prompt-text { font-size: 1.5rem; }
     .prompt-sub { font-size: 0.85rem; }
     .shuffle-start-btn { padding: 14px 36px; font-size: 1rem; }
-    .fan-scene { min-height: 400px; }
+    .fan-scene { min-height: 0; }
     .fan-card { width: 48px; height: 74px; }
     .fan-card-back { font-size: 0.5rem; border-width: 1px; border-radius: 4px; }
     .fan-card-back::after { font-size: 0.45rem; }
@@ -935,7 +992,7 @@ body {
     .gem-shape { width: 48px; height: 64px; }
     .gem-glow { width: 70px; height: 70px; }
     .gem-label { font-size: 0.7rem; margin-top: 10px; }
-    .fan-scene { min-height: 340px; }
+    .fan-scene { min-height: 0; }
     .fan-card { width: 36px; height: 56px; }
     .fan-card-back { border-radius: 3px; }
     .fan-card-back::after { font-size: 0.35rem; }

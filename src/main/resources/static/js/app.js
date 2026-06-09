@@ -3,6 +3,7 @@ const Stage = { GEMS: 'gems', PROMPT: 'prompt', FAN: 'fan', QUESTION: 'question'
 let currentStage = Stage.GEMS;
 let shuffledCards = [];
 let selectedIndices = new Set();
+let pickOrder = [];
 let selectedCards = [];
 
 // ===== DOM 引用 =====
@@ -85,22 +86,25 @@ reshuffleBtn.addEventListener('click', async () => {
 });
 
 // ===== 扇形布局参数 =====
-var FAN_WIDTH = 920;
-var FAN_ARCH = 170;
-var FAN_BASE_Y = 35;
-var ROW_Y = -260;
+var FAN_ARC = 120;    // 扇形总张角（度），以中轴线对称
+var FAN_RADIUS = 460; // 扇形半径（像素）
+var FAN_BASE_Y = 0; // 扇形中心垂直偏移（负值向下移）
+var ROW_Y = -520;
 var ROW_GAP = 90;
 
 function getFanTransform(index, total) {
     var t = total <= 1 ? 0 : (index / (total - 1)) * 2 - 1;
-    var xOffset = t * (FAN_WIDTH / 2);
-    var yOffset = FAN_BASE_Y + FAN_ARCH * (1 - t * t);
-    var slope = (-4 * FAN_ARCH * t) / FAN_WIDTH;
-    var angle = Math.atan(slope) * 180 / Math.PI;
+    var halfAngle = FAN_ARC / 2;
+    var angle = t * halfAngle;
+    var angleRad = angle * Math.PI / 180;
+    var xOffset = FAN_RADIUS * Math.sin(angleRad);
+    var yOffset = FAN_RADIUS * Math.cos(angleRad);
+    var rotation = angle;
     var tx = 'translateX(calc(-50% + ' + xOffset.toFixed(1) + 'px))';
-    var ty = 'translateY(-' + yOffset.toFixed(1) + 'px)';
-    var rot = 'rotate(' + angle.toFixed(1) + 'deg)';
-    return { transform: tx + ' ' + ty + ' ' + rot, angle: angle, x: xOffset, y: yOffset };
+    var yShift = Math.round(FAN_RADIUS * 0.15);
+    var ty = 'translateY(calc(-' + yOffset.toFixed(1) + 'px + ' + yShift + 'px))';
+    var rot = 'rotate(' + rotation.toFixed(1) + 'deg)';
+    return { transform: tx + ' ' + ty + ' ' + rot, angle: rotation, x: xOffset, y: yOffset };
 }
 
 function getRowTransform(selIdx, totalSelected) {
@@ -112,15 +116,18 @@ function getRowTransform(selIdx, totalSelected) {
 
 function updateFanLayout() {
     if (currentStage !== Stage.FAN) return;
-    var sortedSel = Array.from(selectedIndices).sort(function(a,b) { return a - b; });
+    var displayOrder = Array.from(selectedIndices);
+    displayOrder.sort(function(a,b) {
+        return pickOrder.indexOf(a) - pickOrder.indexOf(b);
+    });
     var total = shuffledCards.length;
     var allCards = fanContainer.querySelectorAll('.fan-card');
-    var hasSelection = sortedSel.length >= 3;
+    var hasSelection = displayOrder.length >= 3;
 
     allCards.forEach(function(el, i) {
-        var selPos = sortedSel.indexOf(i);
+        var selPos = displayOrder.indexOf(i);
         if (selPos >= 0) {
-            var rowTf = getRowTransform(selPos, sortedSel.length);
+            var rowTf = getRowTransform(selPos, displayOrder.length);
             el.style.transform = rowTf;
             el.style.zIndex = 100 + selPos;
             el.classList.add('selected');
@@ -143,6 +150,7 @@ function updateFanLayout() {
 function renderFan(cards) {
     fanContainer.innerHTML = '';
     selectedIndices.clear();
+    pickOrder = [];
     selectedCards = [];
     fanCounter.textContent = '已选 0 张';
     confirmBtn.disabled = true;
@@ -152,9 +160,28 @@ function renderFan(cards) {
     var isMobile = window.innerWidth <= 768;
     var isSmall = window.innerWidth <= 520;
 
-    if (isSmall) { FAN_ARC = 68; FAN_RADIUS = 220; FAN_BASE_Y = 28; ROW_Y = -190; ROW_GAP = 55; }
-    else if (isMobile) { FAN_ARC = 105; FAN_RADIUS = Math.round(window.innerWidth * 0.45); FAN_BASE_Y = 30; ROW_Y = -230; ROW_GAP = 72; }
-    else { FAN_ARC = 170; FAN_RADIUS = Math.min(Math.round(window.innerWidth * 0.38), 600); FAN_BASE_Y = 35; ROW_Y = -260; ROW_GAP = 90; }
+    if (isSmall) {
+        var vh = window.innerHeight;
+        var scaleFromHeight = Math.min(1, vh / 700);
+        FAN_ARC = 100;
+        FAN_RADIUS = Math.round(280 * scaleFromHeight);
+        ROW_GAP = Math.round(55 * scaleFromHeight);
+    } else if (isMobile) {
+        var vh = window.innerHeight;
+        var scaleFromHeight = Math.min(1, vh / 750);
+        FAN_ARC = 110;
+        FAN_RADIUS = Math.round(340 * scaleFromHeight);
+        ROW_GAP = Math.round(72 * scaleFromHeight);
+    } else {
+        var vh = window.innerHeight;
+        var vw = window.innerWidth;
+        var scaleFromHeight = Math.min(1, vh / 800);
+        FAN_ARC = 120;
+        FAN_RADIUS = Math.min(Math.round(vw * 0.38), Math.round(460 * scaleFromHeight));
+        ROW_GAP = Math.round(90 * scaleFromHeight);
+    }
+    FAN_BASE_Y = 0;
+    ROW_Y = Math.round(-FAN_RADIUS * 0.4);
 
     var cardW = isSmall ? 36 : (isMobile ? 48 : 62);
     var cardH = Math.round(cardW * 1.56);
@@ -171,9 +198,6 @@ function renderFan(cards) {
 
         var back = document.createElement('div');
         back.className = 'fan-card-back';
-        if (card.reversed) {
-            back.style.transform = 'rotate(180deg)';
-        }
         el.appendChild(back);
 
         el.addEventListener('click', function() { toggleCardSelection(i, el); });
@@ -190,9 +214,11 @@ function renderFan(cards) {
 function toggleCardSelection(index, el) {
     if (selectedIndices.has(index)) {
         selectedIndices.delete(index);
+        pickOrder = pickOrder.filter(function(i) { return i !== index; });
     } else {
         if (selectedIndices.size >= 3) return;
         selectedIndices.add(index);
+        pickOrder.push(index);
     }
     updateFanLayout();
     updateSelectionUI();
@@ -215,6 +241,15 @@ confirmBtn.addEventListener('click', () => {
     fanStage.classList.add('hidden');
     questionStage.classList.remove('hidden');
     currentStage = Stage.QUESTION;
+});
+
+// ===== 返回选牌 =====
+var backToSelectBtn = document.getElementById('backToSelectBtn');
+backToSelectBtn.addEventListener('click', function() {
+    if (currentStage !== Stage.QUESTION) return;
+    questionStage.classList.add('hidden');
+    fanStage.classList.remove('hidden');
+    currentStage = Stage.FAN;
 });
 
 // ===== 提交提问 =====
@@ -384,6 +419,7 @@ function renderSelectedCardsReview(cards) {
 // ===== 重新占卜 =====
 resetBtn.addEventListener('click', () => {
     selectedIndices.clear();
+    pickOrder = [];
     selectedCards = [];
     shuffledCards = [];
     questionInput.value = '';
@@ -431,8 +467,10 @@ window.addEventListener('resize', () => {
         clearTimeout(resizeTimeout);
         resizeTimeout = setTimeout(function() {
             var savedSelected = new Set(selectedIndices);
+            var savedPickOrder = pickOrder.slice();
             renderFan(shuffledCards);
             selectedIndices = savedSelected;
+            pickOrder = savedPickOrder;
             selectedCards = Array.from(selectedIndices).map(function(i) { return shuffledCards[i]; });
             updateFanLayout();
             updateSelectionUI();
