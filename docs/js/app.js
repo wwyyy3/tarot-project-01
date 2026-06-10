@@ -305,6 +305,15 @@ askBtn.addEventListener('click', async function() {
     answerContent.classList.add('hidden');
     answerContent.innerHTML = '';
 
+    // 等待期间轮播安抚文字
+    var loadingMsgs = document.querySelectorAll('#loadingMessages .loading-msg');
+    var msgIndex = 0;
+    var msgTimer = setInterval(function() {
+        loadingMsgs[msgIndex].classList.remove('active');
+        msgIndex = (msgIndex + 1) % loadingMsgs.length;
+        loadingMsgs[msgIndex].classList.add('active');
+    }, 2500);
+
     try {
         var body = JSON.stringify({
             model: 'deepseek-chat',
@@ -324,6 +333,7 @@ askBtn.addEventListener('click', async function() {
             body: body
         });
 
+        clearInterval(msgTimer);
         answerLoading.classList.add('hidden');
         answerContent.classList.remove('hidden');
 
@@ -338,6 +348,7 @@ askBtn.addEventListener('click', async function() {
             answerContent.textContent = '解读失败：' + (errData.error && errData.error.message ? errData.error.message : 'HTTP ' + res.status);
         }
     } catch (err) {
+        clearInterval(msgTimer);
         answerLoading.classList.add('hidden');
         answerContent.classList.remove('hidden');
         answerContent.textContent = '网络错误：' + err.message + '（可能是跨域限制，请尝试 GitHub Pages 或本地运行）';
