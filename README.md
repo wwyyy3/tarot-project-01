@@ -43,9 +43,28 @@
 
 ---
 
+## 在线使用（无需安装）
+
+**直接打开网页就能用！** 👉 **[https://wwyyy3.github.io/tarot-project-01/](https://wwyyy3.github.io/tarot-project-01/)**
+
+纯前端版本部署在 GitHub Pages，卡牌数据全部内置在浏览器端，无需后端服务器。只需要填写你自己的 DeepSeek API Key 即可获取 AI 解读。
+
 ## 打包分发
 
-### 生成独立可执行的 JAR
+### 方式一：GitHub Pages（推荐 — 零安装）
+
+项目 `docs/` 目录包含完整纯前端版本，已部署到 GitHub Pages：
+- 📂 `docs/index.html` — 页面入口
+- 📂 `docs/js/card-data.js` — 78 张卡牌完整数据
+- 📂 `docs/js/app.js` — 前端交互逻辑
+- 📂 `docs/css/style.css` — 样式与动画
+
+如需在自己的仓库启用：
+1. 将 `docs/` 文件夹推送到你的 GitHub 仓库
+2. 进入仓库 Settings → Pages → Source 选择 `Deploy from a branch` → 分支选 `master` → 文件夹选 `/docs` → Save
+3. 等待几分钟，访问 `https://你的用户名.github.io/仓库名/`
+
+### 方式二：JAR 包运行（需要 Java）
 
 ```bash
 mvn clean package -DskipTests
