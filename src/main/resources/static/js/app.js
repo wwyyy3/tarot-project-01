@@ -370,7 +370,7 @@ function renderMarkdown(markdown) {
             return;
         }
 
-        var heading = trimmed.match(/^(#{1,3})\s+(.+)$/);
+        var heading = trimmed.match(/^(#{1,4})\s+(.+)$/);
         if (heading) {
             closeList();
             var level = heading[1].length + 1;

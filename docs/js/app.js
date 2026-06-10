@@ -367,10 +367,11 @@ function renderMarkdown(markdown) {
         var trimmed = line.trim();
         if (!trimmed) { closeList(); return; }
 
-        var heading = trimmed.match(/^(#{1,3})\s+(.+)$/);
+        var heading = trimmed.match(/^(#{1,4})\s+(.+)$/);
         if (heading) {
             closeList();
-            html += '<h' + (heading[1].length + 1) + '>' + renderInlineMarkdown(heading[2]) + '</h' + (heading[1].length + 1) + '>';
+            var level = heading[1].length + 1;
+            html += '<h' + level + '>' + renderInlineMarkdown(heading[2]) + '</h' + level + '>';
             return;
         }
 
