@@ -308,6 +308,22 @@ askBtn.addEventListener('click', async () => {
     answerContent.classList.add('hidden');
     answerContent.innerHTML = '';
 
+    // 等待期间轮播安抚文字
+    var loadingMsgs = document.querySelectorAll('#loadingMessages .loading-msg');
+    var msgIndex = 0;
+    loadingMsgs.forEach(function(m, i) { m.classList.toggle('active', i === 0); });
+    var msgTimer = setInterval(function() {
+        loadingMsgs[msgIndex].classList.remove('active');
+        msgIndex = (msgIndex + 1) % loadingMsgs.length;
+        loadingMsgs[msgIndex].classList.add('active');
+    }, 2500);
+
+    var MIN_LOADING_MS = 3000;
+    var loadingStart = Date.now();
+
+    var apiError = null;
+    var apiResult = null;
+
     try {
         var res = await fetch('/api/tarot/interpret', {
             method: 'POST',
@@ -319,25 +335,36 @@ askBtn.addEventListener('click', async () => {
             })
         });
         var data = await res.json();
-        answerLoading.classList.add('hidden');
-        answerContent.classList.remove('hidden');
 
         if (data.success) {
-            var responseText = '';
-            try {
-                var deepseek = typeof data.deepseek === 'string' ? JSON.parse(data.deepseek) : data.deepseek;
-                responseText = deepseek.choices && deepseek.choices[0] && deepseek.choices[0].message ? deepseek.choices[0].message.content : '未能获取到解读内容。';
-            } catch (e) {
-                responseText = '解读完成，但返回格式异常。请检查 API 密钥。';
-            }
-            answerContent.innerHTML = renderMarkdown(responseText);
+            apiResult = data;
         } else {
-            answerContent.textContent = '解读失败：' + (data.error || '未知错误');
+            apiError = { message: data.error || '未知错误' };
         }
     } catch (err) {
-        answerLoading.classList.add('hidden');
-        answerContent.classList.remove('hidden');
-        answerContent.textContent = '网络错误：' + err.message;
+        apiError = { message: '网络错误：' + err.message };
+    }
+
+    // 确保加载动画至少展示 MIN_LOADING_MS 毫秒（让用户能看到轮播文字和加载动画）
+    var elapsed = Date.now() - loadingStart;
+    if (elapsed < MIN_LOADING_MS) {
+        await new Promise(function(resolve) { setTimeout(resolve, MIN_LOADING_MS - elapsed); });
+    }
+
+    answerLoading.classList.add('hidden');
+    answerContent.classList.remove('hidden');
+
+    if (apiError) {
+        answerContent.textContent = '解读失败：' + apiError.message;
+    } else {
+        var responseText = '';
+        try {
+            var deepseek = typeof apiResult.deepseek === 'string' ? JSON.parse(apiResult.deepseek) : apiResult.deepseek;
+            responseText = deepseek.choices && deepseek.choices[0] && deepseek.choices[0].message ? deepseek.choices[0].message.content : '未能获取到解读内容。';
+        } catch (e) {
+            responseText = '解读完成，但返回格式异常。请检查 API 密钥。';
+        }
+        answerContent.innerHTML = renderMarkdown(responseText);
     }
 
     askBtn.disabled = false;
