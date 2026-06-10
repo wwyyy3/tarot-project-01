@@ -308,6 +308,8 @@ askBtn.addEventListener('click', async function() {
     // 等待期间轮播安抚文字
     var loadingMsgs = document.querySelectorAll('#loadingMessages .loading-msg');
     var msgIndex = 0;
+    // 先激活第一条，确保第一条可见
+    loadingMsgs.forEach(function(m, i) { m.classList.toggle('active', i === 0); });
     var msgTimer = setInterval(function() {
         loadingMsgs[msgIndex].classList.remove('active');
         msgIndex = (msgIndex + 1) % loadingMsgs.length;
