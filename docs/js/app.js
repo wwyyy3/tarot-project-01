@@ -343,6 +343,12 @@ askBtn.addEventListener('click', async function() {
         loadingMsgs[msgIndex].classList.add('active');
     }, 2500);
 
+    var MIN_LOADING_MS = 3000;
+    var loadingStart = Date.now();
+
+    var apiError = null;
+    var apiResult = null;
+
     try {
         var body = JSON.stringify({
             model: 'deepseek-chat',
@@ -362,25 +368,36 @@ askBtn.addEventListener('click', async function() {
             body: body
         });
 
-        clearInterval(msgTimer);
-        answerLoading.classList.add('hidden');
-        answerContent.classList.remove('hidden');
-
         if (res.ok) {
-            var data = await res.json();
-            var responseText = (data.choices && data.choices[0] && data.choices[0].message)
-                ? data.choices[0].message.content
-                : '未能获取到解读内容。';
-            answerContent.innerHTML = renderMarkdown(responseText);
+            apiResult = await res.json();
         } else {
-            var errData = await res.json().catch(function() { return {}; });
-            answerContent.textContent = '解读失败：' + (errData.error && errData.error.message ? errData.error.message : 'HTTP ' + res.status);
+            apiError = { type: 'http', status: res.status, data: await res.json().catch(function() { return {}; }) };
         }
     } catch (err) {
-        clearInterval(msgTimer);
-        answerLoading.classList.add('hidden');
-        answerContent.classList.remove('hidden');
-        answerContent.textContent = '网络错误：' + err.message + '（可能是跨域限制，请尝试 GitHub Pages 或本地运行）';
+        apiError = { type: 'network', message: err.message };
+    }
+
+    // 确保加载动画至少展示 MIN_LOADING_MS 毫秒（让用户能看到轮播文字和加载动画）
+    var elapsed = Date.now() - loadingStart;
+    if (elapsed < MIN_LOADING_MS) {
+        await new Promise(function(resolve) { setTimeout(resolve, MIN_LOADING_MS - elapsed); });
+    }
+
+    clearInterval(msgTimer);
+    answerLoading.classList.add('hidden');
+    answerContent.classList.remove('hidden');
+
+    if (apiError) {
+        if (apiError.type === 'network') {
+            answerContent.textContent = '网络错误：' + apiError.message + '（可能是跨域限制，请尝试 GitHub Pages 或本地运行）';
+        } else {
+            answerContent.textContent = '解读失败：' + (apiError.data.error && apiError.data.error.message ? apiError.data.error.message : 'HTTP ' + apiError.status);
+        }
+    } else {
+        var responseText = (apiResult.choices && apiResult.choices[0] && apiResult.choices[0].message)
+            ? apiResult.choices[0].message.content
+            : '未能获取到解读内容。';
+        answerContent.innerHTML = renderMarkdown(responseText);
     }
 
     askBtn.disabled = false;
