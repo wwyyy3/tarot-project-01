@@ -253,6 +253,17 @@ askBtn.addEventListener('click', async function() {
         return;
     }
 
+    // 清理 API Key：剔除所有非 ASCII 字符（浏览器 Header 仅允许 ISO-8859-1）
+    apiKey = apiKey.replace(/[^\x00-\x7F]/g, '').trim();
+    if (!apiKey) {
+        apiKeyInput.focus();
+        apiKeyInput.style.borderColor = '#e74c3c';
+        apiKeyInput.value = '';
+        apiKeyInput.placeholder = 'API Key 包含无效字符，请重新输入';
+        setTimeout(function() { apiKeyInput.style.borderColor = ''; apiKeyInput.placeholder = 'sk-...'; }, 3000);
+        return;
+    }
+
     askBtn.disabled = true;
     askBtn.classList.add('loading');
     askBtn.querySelector('span:last-child').textContent = '请稍候...';
