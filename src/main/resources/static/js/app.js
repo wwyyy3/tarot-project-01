@@ -228,7 +228,7 @@ function updateSelectionUI() {
     var count = selectedIndices.size;
     fanCounter.textContent = '已选 ' + count + ' / 3 张';
     confirmBtn.disabled = count === 0;
-    selectedCards = Array.from(selectedIndices).map(function(i) { return shuffledCards[i]; });
+    selectedCards = pickOrder.map(function(i) { return shuffledCards[i]; }); // 按选中顺序：过去→现在→未来
 
     // 真实卡牌会飞到上方已选区；这里不复制卡面，避免出现两张同样的牌。
     var rowContainer = document.getElementById('selectedRowCards');
@@ -509,7 +509,7 @@ window.addEventListener('resize', () => {
             renderFan(shuffledCards);
             selectedIndices = savedSelected;
             pickOrder = savedPickOrder;
-            selectedCards = Array.from(selectedIndices).map(function(i) { return shuffledCards[i]; });
+            selectedCards = pickOrder.map(function(i) { return shuffledCards[i]; }); // 按选中顺序：过去→现在→未来
             updateFanLayout();
             updateSelectionUI();
         }, 300);
